@@ -102,15 +102,12 @@ public class UserInterface {
                                         "Por favor ingrese el tiempo maximo de ejecucion para los procesadores no refrigerados:");
                                 int X = Integer.parseInt(input.readLine());
 
-                                List<Procesador> resultado = servicios.servicio4(X);
-                                
-                                if (resultado.isEmpty()) {
+                                Solucion solucion = servicios.servicio4(X);
+
+                                if (!solucion.existe()) {
                                     System.out.println("No se encontró una asignación de tareas adecuada.");
                                 } else {
-                                    System.out.println("Mejor asignación de tareas:");
-                                    for (Procesador p : resultado) {
-                                        System.out.println(p.toString());
-                                    }
+                                    System.out.println("Mejor asignación encontrada:" + solucion.toString());
                                 }
                                 break;
                         }

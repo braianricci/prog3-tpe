@@ -23,10 +23,9 @@ public class Procesador {
         this.procesos.add(tarea);
     }
 
-    public void removerProceso(Tarea tarea){
+    public void removerProceso(Tarea tarea) {
         procesos.remove(tarea);
     }
-
 
     public List<Tarea> getProcesos() {
         return procesos;
@@ -82,6 +81,16 @@ public class Procesador {
         return count;
     }
 
+    @Override
 
+    public String toString() {
+        String tareas = "";
 
+        for (Tarea t : this.procesos) {
+            tareas += t.toString() + "; ";
+        }
+        return "ID: " + this.getId() +
+                " - Codigo: " + this.getCodigo() +
+                "\nTareas asignadas:" + tareas;
+    }
 }

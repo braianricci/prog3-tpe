@@ -17,23 +17,26 @@ public class Servicios {
 	private Hashtable<String, Tarea> indiceID;
 	private Tarea[] indicePrioridad;
 
+	private List<Tarea> tareas;
+	private List<Procesador> procesadores;
+
 	/*
 	 * Expresar la complejidad temporal del constructor.
 	 */
 	public Servicios(String pathProcesadores, String pathTareas) {
 
 		CSVReader reader = new CSVReader();
-		List<Procesador> procesadores = reader.readProcessors(pathProcesadores);
-		List<Tarea> tareas = reader.readTasks(pathTareas);
+		this.procesadores = reader.readProcessors(pathProcesadores);
+		this.tareas = reader.readTasks(pathTareas);
 
 		this.indiceID = new Hashtable<>();
 		this.criticas = new ArrayList<>();
 		this.noCriticas = new ArrayList<>();
-		this.indicePrioridad = new Tarea[tareas.size()];
+		this.indicePrioridad = new Tarea[this.tareas.size()];
 
-		clasificar(tareas);
-		hashear(tareas);
-		ordenar(tareas);
+		clasificar();
+		hashear();
+		ordenar();
 	}
 
 	/*
@@ -75,17 +78,15 @@ public class Servicios {
 		return tareasEnRango;
 	}
 
-	public List<Procesador> servicio4(int tiempoMaximo) {
+	public Solucion servicio4(int tiempoMaximo) {
 
-		List<Procesador> res = new ArrayList<>();
-
-		return res;
+		return (backtracking(tiempoMaximo));
 	}
 
 	// Metodos privados
 
-	private void clasificar(List<Tarea> tareas) {
-		for (Tarea tarea : tareas) {
+	private void clasificar() {
+		for (Tarea tarea : this.tareas) {
 			if (tarea.getCritica()) {
 				this.criticas.add(tarea);
 			} else {
@@ -94,18 +95,19 @@ public class Servicios {
 		}
 	}
 
-	private void hashear(List<Tarea> tareas) {
-		for (Tarea tarea : tareas) {
-			this.indiceID.put(tarea.getID(), tarea);
+	private void hashear() {
+		for (Tarea tarea : this.tareas) {
+			this.indiceID.put(tarea.getId(), tarea);
 		}
 	}
 
-	private void ordenar(List<Tarea> tareas) {
+	private void ordenar() {
 
-		Collections.sort(tareas);
+		List<Tarea> temp = new ArrayList<>(this.tareas);
+		Collections.sort(temp);
 
 		for (int i = 0; i < tareas.size(); i++) {
-			this.indicePrioridad[i] = tareas.get(i);
+			this.indicePrioridad[i] = temp.get(i);
 		}
 	}
 
@@ -128,6 +130,12 @@ public class Servicios {
 			else
 				return medio;
 		}
+	}
+
+	public Solucion backtracking(int tiempoMaximo) {
+		Backtracking3 backtracking = new Backtracking3();
+		Solucion salida = backtracking.resolver(procesadores, tareas, tiempoMaximo);
+		return salida;
 	}
 
 	// NOT

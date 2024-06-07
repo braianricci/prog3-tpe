@@ -9,18 +9,18 @@ public class Tarea implements Comparable<Tarea> {
     private int prioridad;
 
     public Tarea(String id, String nombre, int tiempo, boolean critica, int prioridad) {
-        this.setID(id);
+        this.setId(id);
         this.setNombre(nombre);
-        this.setTiempo(tiempo);
+        this.setTiempoEjecucion(tiempo);
         this.setCritica(critica);
         this.setPrioridad(prioridad);
     }
 
-    public String getID() {
+    public String getId() {
         return this.id;
     }
 
-    private void setID(String id) {
+    private void setId(String id) {
         this.id = id;
     }
 
@@ -32,11 +32,7 @@ public class Tarea implements Comparable<Tarea> {
         this.nombre = nombre;
     }
 
-    public int getTiempo() {
-        return this.tiempo;
-    }
-
-    private void setTiempo(int tiempo) {
+    private void setTiempoEjecucion(int tiempo) {
         this.tiempo = tiempo;
     }
 
@@ -55,17 +51,16 @@ public class Tarea implements Comparable<Tarea> {
     private void setPrioridad(int prioridad) {
         this.prioridad = prioridad;
     }
-    
+
     public int getTiempoEjecucion() {
         return this.tiempo;
     }
-    
 
     @Override
     public String toString() {
-        return "ID: " + this.getID() +
+        return "ID: " + this.getId() +
                 " - Nombre: " + this.getNombre() +
-                " - Tiempo de ejecución: " + this.getTiempo() +
+                " - Tiempo de ejecución: " + this.getTiempoEjecucion() +
                 " - Es critica?: " + this.getCritica() +
                 " - Prioridad: " + this.getPrioridad();
     }
