@@ -23,6 +23,11 @@ public class Procesador {
         this.procesos.add(tarea);
     }
 
+    public void removerProceso(Tarea tarea){
+        procesos.remove(tarea);
+    }
+
+
     public List<Tarea> getProcesos() {
         return procesos;
     }
@@ -33,10 +38,6 @@ public class Procesador {
 
     public String getCodigo() {
         return codigo;
-    }
-
-    public boolean isRefrigerado() {
-        return refrigerado;
     }
 
     public int getAnio() {
@@ -55,7 +56,32 @@ public class Procesador {
         this.refrigerado = refrigerado;
     }
 
+    public boolean getRefrigerado() {
+        return this.refrigerado;
+    }
+
     private void setAnio(int anio) {
         this.anio = anio;
     }
+
+    public int getTiempoTotal() {
+        int tiempoTotal = 0;
+        for (Tarea tarea : procesos) {
+            tiempoTotal += tarea.getTiempoEjecucion();
+        }
+        return tiempoTotal;
+    }
+
+    public int getTareasCriticas() {
+        int count = 0;
+        for (Tarea tarea : procesos) {
+            if (tarea.getCritica()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
+
 }

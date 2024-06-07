@@ -16,13 +16,14 @@ public class UserInterface {
 
             while (userString.length() >= 1) {
 
-                System.out.println("\nPor favor, ingrese el numero de servicio que desea utilizar: [1][2][3]");
+                System.out.println("\nPor favor, ingrese el numero de servicio que desea utilizar: [1][2][3][4]");
                 userString = input.readLine();
 
                 switch (userString) {
                     case "1":
                     case "2":
                     case "3":
+                    case "4":
                         System.out.println("Eligio el servicio [" + userString + "]");
 
                         switch (userString) {
@@ -99,6 +100,19 @@ public class UserInterface {
 
                                 System.out.println(
                                         "Por favor ingrese el tiempo maximo de ejecucion para los procesadores no refrigerados:");
+                                int X = Integer.parseInt(input.readLine());
+
+                                List<Procesador> resultado = servicios.servicio4(X);
+                                
+                                if (resultado.isEmpty()) {
+                                    System.out.println("No se encontró una asignación de tareas adecuada.");
+                                } else {
+                                    System.out.println("Mejor asignación de tareas:");
+                                    for (Procesador p : resultado) {
+                                        System.out.println(p.toString());
+                                    }
+                                }
+                                break;
                         }
                         break;
                     default:

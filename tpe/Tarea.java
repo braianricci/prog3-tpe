@@ -55,6 +55,11 @@ public class Tarea implements Comparable<Tarea> {
     private void setPrioridad(int prioridad) {
         this.prioridad = prioridad;
     }
+    
+    public int getTiempoEjecucion() {
+        return this.tiempo;
+    }
+    
 
     @Override
     public String toString() {
