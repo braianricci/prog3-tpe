@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-
 import tpe.utils.CSVReader;
 
 /**
@@ -13,11 +12,10 @@ import tpe.utils.CSVReader;
  * de implementación.
  */
 public class Servicios {
+
 	private List<Tarea> criticas, noCriticas;
 	private Hashtable<String, Tarea> indiceID;
 	private Tarea[] indicePrioridad;
-	private List<Procesador> procesadores;
-	private List<Tarea> tareas;
 
 	/*
 	 * Expresar la complejidad temporal del constructor.
@@ -32,8 +30,6 @@ public class Servicios {
 		this.criticas = new ArrayList<>();
 		this.noCriticas = new ArrayList<>();
 		this.indicePrioridad = new Tarea[tareas.size()];
-		this.procesadores = procesadores;
-		this.tareas = tareas;
 
 		clasificar(tareas);
 		hashear(tareas);
@@ -81,8 +77,9 @@ public class Servicios {
 
 	public List<Procesador> servicio4(int tiempoMaximo) {
 
-		return (backtracking(tiempoMaximo));
+		List<Procesador> res = new ArrayList<>();
 
+		return res;
 	}
 
 	// Metodos privados
@@ -133,28 +130,18 @@ public class Servicios {
 		}
 	}
 
-	public List<Procesador> backtracking(int tiempoMaximo) {
-		Backtracking backtracking = new Backtracking();
-		List<Procesador> salida = backtracking.resolver(procesadores, tareas, tiempoMaximo);
-		return salida;
-	}
-
-/* 	private List<Object> greedy(int tiempoMaximo) {
-		return null;
-	} */
-
 	// NOT
 
-/* 	private int buscarIndice(int prioridad) {
+	private int buscarIndice(int prioridad) {
 
 		// int res = busquedaNormal(prioridad);
 		int res = binariaRecursiva(this.indicePrioridad, prioridad, 0, this.indicePrioridad.length - 1);
 
 		System.out.println("i=" + res);
 		return res;
-	} */
+	}
 
-/* 	private int binariaRecursiva(Tarea[] tareas, int prioridad, int inicio, int fin) {
+	private int binariaRecursiva(Tarea[] tareas, int prioridad, int inicio, int fin) {
 
 		int medio;
 
@@ -184,7 +171,5 @@ public class Servicios {
 		}
 
 		return res;
-	} */
-
-	
+	}
 }
