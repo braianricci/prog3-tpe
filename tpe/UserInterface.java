@@ -16,7 +16,12 @@ public class UserInterface {
 
             while (userString.length() >= 1) {
 
-                System.out.println("\nPor favor, ingrese el numero de servicio que desea utilizar: [1][2][3][4]");
+                System.out.println("\nPor favor, ingrese el número de servicio que desea utilizar:" +
+                        "\n[1] - Búsqueda de tareas por ID." +
+                        "\n[2] - Visualización de tareas críticas o no críticas." +
+                        "\n[3] - Búsqueda de tareas por rango de prioridad" +
+                        "\n[4] - Asignación de tareas a procesadores.");
+
                 userString = input.readLine();
 
                 switch (userString) {
@@ -24,12 +29,12 @@ public class UserInterface {
                     case "2":
                     case "3":
                     case "4":
-                        System.out.println("Eligio el servicio [" + userString + "]");
+                        System.out.println("Se eligió el servicio [" + userString + "]");
 
                         switch (userString) {
                             case "1":
 
-                                System.out.println("Por favor, ingrese el ID de la tarea que desea solicitar:");
+                                System.out.println("\nPor favor, ingrese el ID de la tarea que desea solicitar:");
                                 userString = input.readLine();
 
                                 Tarea tarea = servicios.servicio1(userString);
@@ -43,7 +48,7 @@ public class UserInterface {
                             case "2":
 
                                 System.out.println(
-                                        "Por favor, especifique si desea ver las tareas [C]ritias, o las [N]o criticas: [C][N]");
+                                        "\nPor favor, especifique si desea ver las tareas [C]ritias, o las [N]o criticas: [C][N]");
                                 userString = input.readLine();
                                 List<Tarea> tareas;
 
@@ -65,7 +70,7 @@ public class UserInterface {
                             case "3":
 
                                 System.out.println(
-                                        "Por favor, ingrese el limite inferior de del rango de prioridad ( numero entre 0 y 100):");
+                                        "\nPor favor, ingrese el limite inferior de del rango de prioridad ( numero entre 0 y 100):");
                                 int inf = Integer.parseInt(input.readLine());
 
                                 if (inf < 0 || inf > 100) {
@@ -99,16 +104,10 @@ public class UserInterface {
                             case "4":
 
                                 System.out.println(
-                                        "Por favor ingrese el tiempo maximo de ejecucion para los procesadores no refrigerados:");
-                                int X = Integer.parseInt(input.readLine());
+                                        "\nPor favor ingrese el tiempo maximo de ejecucion para los procesadores no refrigerados:");
+                                int x = Integer.parseInt(input.readLine());
 
-                                Solucion solucion = servicios.servicio4(X);
-
-                                if (!solucion.existe()) {
-                                    System.out.println("No se encontró una asignación de tareas adecuada.");
-                                } else {
-                                    System.out.println("Mejor asignación encontrada:" + solucion.toString());
-                                }
+                                System.out.println("\nEstrategia Backtracking:" + servicios.servicio4(x).toString());
                                 break;
                         }
                         break;

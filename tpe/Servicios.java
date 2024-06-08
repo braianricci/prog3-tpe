@@ -2,7 +2,7 @@ package tpe;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import tpe.utils.CSVReader;
 
@@ -13,15 +13,33 @@ import tpe.utils.CSVReader;
  */
 public class Servicios {
 
+	// estructuras para los servicios 1-3
+	/*
+	 * Decidimos utilizar estructuras sencillas, a modo de indices; priorizando
+	 * optimizar el acceso a los datos y no considerar los costos de construccion,
+	 * insercion, borrado, etc; dada la ausencia de insercion, modificacion y
+	 * borrado en tiempo de ejecucion.
+	 */
+	private HashMap<String, Tarea> indiceID;
 	private List<Tarea> criticas, noCriticas;
-	private Hashtable<String, Tarea> indiceID;
-	private Tarea[] indicePrioridad;
+	private List<Tarea> indicePrioridad;
 
+	// estructuras para el servicio 4, no optimizadas y en el mismo orden presente
+	// en los .csv.
 	private List<Tarea> tareas;
 	private List<Procesador> procesadores;
 
 	/*
-	 * Expresar la complejidad temporal del constructor.
+	 * Constructor: O(n.log n).
+	 * 
+	 * Multiples veces en el constructor, realizamos la tarea de crear y recorrer
+	 * 1 por 1 todos los elementos expresados en el dataset, lo que
+	 * significa una complejidad O(x.n), que resulta en O(n) al ignorar el valor
+	 * constante x.
+	 * Lamentablemente, la complejidad se eleva por la inclusion de el metodo de
+	 * ordenamiento Collections.sort() llamado por la funcion ordenar(). Utiliza
+	 * ordenamiento Timsort, una version mejorada de Mergesort que en el peor de
+	 * los casos tiene una complejidad de O(n.log n)
 	 */
 	public Servicios(String pathProcesadores, String pathTareas) {
 
@@ -29,25 +47,31 @@ public class Servicios {
 		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareas = reader.readTasks(pathTareas);
 
-		this.indiceID = new Hashtable<>();
+		this.indiceID = new HashMap<>();
 		this.criticas = new ArrayList<>();
 		this.noCriticas = new ArrayList<>();
-		this.indicePrioridad = new Tarea[this.tareas.size()];
+		this.indicePrioridad = new ArrayList<>(this.tareas);
 
-		clasificar();
 		hashear();
+		clasificar();
 		ordenar();
 	}
 
 	/*
-	 * Expresar la complejidad temporal del servicio 1.
+	 * Servicio 1: O(1).
+	 *
+	 * Por tratarse de un HashMap, la complejidad sera de O(1).
 	 */
 	public Tarea servicio1(String id) {
 		return this.indiceID.get(id);
 	}
 
 	/*
-	 * Expresar la complejidad temporal del servicio 2.
+	 * Servicio 2: O(1).
+	 *
+	 * Al retornar cualquiera de las dos listas solicitadas; la complejidad
+	 * computacional sera de O(1) ya que la operacion implica el retorno de una
+	 * referencia a un objeto List<Tarea>.
 	 */
 	public List<Tarea> servicio2(boolean esCritica) {
 		if (esCritica)
@@ -56,31 +80,33 @@ public class Servicios {
 	}
 
 	/*
-	 * Expresar la complejidad temporal del servicio 3.
+	 * Servicio 3: O(log n).
+	 *
+	 * Utilizamos una busqueda binaria recursiva sobre una lista ordenada. La
+	 * complejidad de cada busqueda es O(log n), y aunque utilicemos 2 busquedas
+	 * consecutivas, los factores constantes no se tendran en cuenta y O(2.log n)
+	 * seguira siendo equivalente a O(log n).
+	 * Luego creamos una subList utilizando los indices encontrados. Como una
+	 * subList es una "vista" de la lista original, no hay nuevos accesos a memoria
+	 * y solo se trata de una referencia a las tareas originales, por lo que la
+	 * complejidad de esta operacion, O(1), no suma a la complejidad predominante en
+	 * la funcion.
 	 */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 
-		List<Tarea> tareasEnRango = new ArrayList<Tarea>();
-		int length = this.indicePrioridad.length;
+		int length = this.indicePrioridad.size();
 
-		// int i = buscarIndice(prioridadInferior);
-		int i = binariaRecursiva2(prioridadInferior, 0, length - 1);
+		int i = binariaRecursiva(prioridadInferior, 0, length - 1);
+		int s = binariaRecursiva(prioridadSuperior, 0, length - 1);
 
-		for (; i < length; i++) {
-
-			Tarea t = this.indicePrioridad[i];
-
-			if (t.getPrioridad() <= prioridadSuperior) {
-				tareasEnRango.add(t);
-			}
-		}
-
-		return tareasEnRango;
+		return this.tareas.subList(i, s);
 	}
 
+	// implementamos la asignacion de tareas como servicio 4.
 	public Solucion servicio4(int tiempoMaximo) {
 
-		return (backtracking(tiempoMaximo));
+		Backtracking backtracking = new Backtracking();
+		return backtracking.resolver(procesadores, tareas, tiempoMaximo);
 	}
 
 	// Metodos privados
@@ -102,16 +128,10 @@ public class Servicios {
 	}
 
 	private void ordenar() {
-
-		List<Tarea> temp = new ArrayList<>(this.tareas);
-		Collections.sort(temp);
-
-		for (int i = 0; i < tareas.size(); i++) {
-			this.indicePrioridad[i] = temp.get(i);
-		}
+		Collections.sort(this.indicePrioridad);
 	}
 
-	private int binariaRecursiva2(int prioridad, int inicio, int fin) {
+	private int binariaRecursiva(int prioridad, int inicio, int fin) {
 
 		int medio;
 
@@ -121,63 +141,14 @@ public class Servicios {
 		} else {
 
 			medio = (inicio + fin) / 2;
-			int medioPrio = this.indicePrioridad[medio].getPrioridad();
+			int medioPrio = this.indicePrioridad.get(medio).getPrioridad();
 
 			if (prioridad > medioPrio)
-				return binariaRecursiva2(prioridad, medio + 1, fin);
+				return binariaRecursiva(prioridad, medio + 1, fin);
 			else if (prioridad < medioPrio)
-				return binariaRecursiva2(prioridad, inicio, medio - 1);
+				return binariaRecursiva(prioridad, inicio, medio - 1);
 			else
 				return medio;
 		}
-	}
-
-	public Solucion backtracking(int tiempoMaximo) {
-		Backtracking3 backtracking = new Backtracking3();
-		Solucion salida = backtracking.resolver(procesadores, tareas, tiempoMaximo);
-		return salida;
-	}
-
-	// NOT
-
-	private int buscarIndice(int prioridad) {
-
-		// int res = busquedaNormal(prioridad);
-		int res = binariaRecursiva(this.indicePrioridad, prioridad, 0, this.indicePrioridad.length - 1);
-
-		System.out.println("i=" + res);
-		return res;
-	}
-
-	private int binariaRecursiva(Tarea[] tareas, int prioridad, int inicio, int fin) {
-
-		int medio;
-
-		if (inicio > fin) {
-			return inicio; // si no se encuentra el elemento, devolvemos inicio, lo que nos dara el indice
-							// que el elemento buscado deberia ocupar en el array
-		} else {
-
-			medio = (inicio + fin) / 2;
-			if (prioridad > tareas[medio].getPrioridad())
-				return binariaRecursiva(tareas, prioridad, medio + 1, fin);
-			else if (prioridad < tareas[medio].getPrioridad())
-				return binariaRecursiva(tareas, prioridad, inicio, medio - 1);
-			else
-				return medio;
-		}
-	}
-
-	private int busquedaNormal(int prioridad) {
-
-		int res = -1;
-		for (int i = 0; i < indicePrioridad.length; i++) {
-			if (indicePrioridad[i].getPrioridad() >= prioridad) {
-				res = i;
-				i = indicePrioridad.length;
-			}
-		}
-
-		return res;
 	}
 }

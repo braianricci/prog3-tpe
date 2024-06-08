@@ -1,72 +1,87 @@
 package tpe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Backtracking {
-    // Atributos necesarios para almacenar la mejor solución
-    private List<Procesador> mejorAsignacion;
-    private int tiempoMaximoMinimo;
-    private int tiempoActual; // Variable de instancia para manejar el tiempo actual
-    private int tareaIndex; // Variable de instancia para manejar el índice de la tarea
 
-    // Constructor para inicializar
+    private Solucion solucion;
+    private int tareaIndex; // variable para controlar que tarea estamos asignando
+
     public Backtracking() {
-        this.mejorAsignacion = new ArrayList<>();
-        this.tiempoMaximoMinimo = Integer.MAX_VALUE; // Inicializar con el valor máximo
-        this.tiempoActual = 0; // Inicializar el tiempo actual en 0
-        this.tareaIndex = 0; // Inicializar el índice de tarea en 0
+        this.solucion = new Solucion();
+        this.tareaIndex = 0; // inicializar el indice en 0
     }
 
-    // Método principal que se llama para resolver
-    public List<Procesador> resolver(List<Procesador> procesadores, List<Tarea> tareas, int X) {
-        tareaIndex = 0; // Asegurarse de que el índice de la tarea se inicializa a 0
-        backtrack(procesadores, tareas, X); // Llamar a backtrack sin pasar el índice
-        return mejorAsignacion;
+    /*
+     * Utilizaremos las listas originales de procesadores y tareas como solucion
+     * parcial que pasamos como parametro junto al tamaño maximo ingresado por el
+     * usuario. Asignaremos las tareas de ser posible, llamaremos la recursion, y al
+     * regresar las vamos a desasignar para explorar otras posibilidades.
+     * De no poder asignarlas se corta la recursion.
+     * En cada recursion lo primero que chequeamos es el tiempo maximo de nuestra
+     * solucion parcial contra nuestro mejor resultado; si no lo podemos mejorar,
+     * podamos.
+     * Al asignar todas las tareas, pasamos la solucion posible para ser contada,
+     * comparada, y en caso de ser la mejor hasta el momento, guardada.
+     */
+    public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas, int x) {
+        backtrack(procesadores, tareas, x);
+        return solucion;
     }
 
-    // Método recursivo de backtracking
-    private void backtrack(List<Procesador> procesadores, List<Tarea> tareas, int X) {
-        // Caso base: todas las tareas han sido asignadas
+    // Metodo recursivo
+    private void backtrack(List<Procesador> procesadores, List<Tarea> tareas, int x) {
+
+        // poda por tiempo de ejecucion de la solucion parcial
+        if (!puedeMejorar(procesadores)) {
+            return;
+        }
+        // si todas las tareas han sido asignadas llegamos a una solucion posible
         if (tareaIndex == tareas.size()) {
-            if (tiempoActual < tiempoMaximoMinimo) {
-                tiempoMaximoMinimo = tiempoActual;
-                mejorAsignacion = new ArrayList<>(procesadores);
-            }
+            // de ser la mejor solucion hasta el momento solucion la guardara
+            solucion.compararResultado(procesadores);
             return;
         }
 
-        // Obtener la tarea actual
+        // obtener la tarea actual
         Tarea tarea = tareas.get(tareaIndex);
-        
-        // Intentar asignar la tarea a cada procesador
+
         for (Procesador p : procesadores) {
-            if (puedeAsignar(p, tarea, X)) {
+
+            // poda por restricciones entre tareas y procesadores
+            if (puedeAsignar(p, tarea, x)) {
+
                 asignarTarea(p, tarea);
-                int tiempoAnterior = tiempoActual; // Guardar el tiempo actual antes de la asignación
-                tiempoActual = Math.max(tiempoActual, p.getTiempoTotal()); // Actualizar el tiempo actual
-                tareaIndex++; // Incrementar tareaIndex
-                backtrack(procesadores, tareas, X); // Llamada recursiva
-                tareaIndex--; // Restaurar el índice de la tarea después de desasignar la tarea
+                tareaIndex++;
+
+                // al decidir asignar la tarea, estamos generando un estado
+                solucion.sumarEstado();
+                backtrack(procesadores, tareas, x);
+
+                // al volver de la recursion, se desasigna la tarea y se decrece el indice para
+                // explorar otra rama
                 desasignarTarea(p, tarea);
-                tiempoActual = tiempoAnterior; // Restaurar el tiempo actual después de desasignar la tarea
+                tareaIndex--;
             }
         }
     }
 
-    // Método para verificar si se puede asignar una tarea a un procesador
-    private boolean puedeAsignar(Procesador p, Tarea t, int X) {
-        // Verificar restricciones
-        return (t.getCritica() ? p.getTareasCriticas() < 2 : true) &&
-               (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= X));
+    // chequeo de restricciones de asignacion
+    private boolean puedeAsignar(Procesador p, Tarea t, int x) {
+
+        return (t.getCritica() ? p.getTareasCriticas() < 2 : true)
+                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= x));
     }
 
-    // Método para asignar una tarea a un procesador
+    // chequeo de tiempo actual contra mejor tiempo
+    private boolean puedeMejorar(List<Procesador> solucionParcial) {
+        return (Solucion.calcularTiempoMaximo(solucionParcial) < this.solucion.getMejorTiempo());
+    }
+
     private void asignarTarea(Procesador p, Tarea t) {
         p.agregarProceso(t);
     }
 
-    // Método para desasignar una tarea de un procesador
     private void desasignarTarea(Procesador p, Tarea t) {
         p.removerProceso(t);
     }

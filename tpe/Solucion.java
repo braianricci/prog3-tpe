@@ -4,75 +4,92 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solucion {
-    private boolean existe;
-    private int solucionesPosibles;
-
-    private List<String[]> solucion;
+    private int cantidadDeEstados, cantidadDeSolucionesPosibles, mejorTiempo;
+    private List<String[]> mejorResultado;
 
     public Solucion() {
-        this.solucionesPosibles = 0;
-        this.setExiste(false);
-        this.solucion = new ArrayList<>();
+        this.cantidadDeEstados = 0;
+        this.cantidadDeSolucionesPosibles = 0;
+        this.mejorTiempo = Integer.MAX_VALUE;
+        this.mejorResultado = new ArrayList<>();
     }
 
-    public void guardarSolucion(List<Procesador> solucion) {
+    public void compararResultado(List<Procesador> solucion) {
 
-        // this.solucion.clear();
+        this.cantidadDeSolucionesPosibles++;
 
+        int tiempoMaximo = Solucion.calcularTiempoMaximo(solucion);
+
+        if (tiempoMaximo < this.mejorTiempo) {
+            this.mejorTiempo = tiempoMaximo;
+            this.guardarSolucion(solucion, mejorTiempo);
+        }
+    }
+
+    public void sumarEstado() {
+        this.cantidadDeEstados++;
+    }
+
+    public int getMejorTiempo() {
+        return this.mejorTiempo;
+    }
+
+    public static int calcularTiempoMaximo(List<Procesador> procesadores) {
+
+        int tiempoMaximo = 0;
+        for (Procesador p : procesadores) {
+            int tiempoDeProcesado = p.getTiempoTotal();
+            if (tiempoDeProcesado > tiempoMaximo) {
+                tiempoMaximo = tiempoDeProcesado;
+            }
+        }
+
+        return tiempoMaximo;
+    }
+
+    private void guardarSolucion(List<Procesador> solucion, int tiempo) {
+
+        this.mejorResultado.clear();
         for (Procesador p : solucion) {
-            this.agregarProcesador(p);
+            this.agregarProcesadorASolucion(p);
         }
-        this.setExiste(true);
-        this.sumarSolucionPosible();
     }
 
-    public List<String[]> getSolucion() {
-        return this.solucion;
-    }
+    private void agregarProcesadorASolucion(Procesador procesador) {
 
-    public boolean existe() {
-        return this.existe;
-    }
+        int numProcesos = procesador.getProcesos().size();
+        String[] dataProcesador = new String[numProcesos + 2];
+        dataProcesador[0] = procesador.getId();
+        dataProcesador[1] = String.valueOf(procesador.getTiempoTotal());
 
-    private void agregarProcesador(Procesador procesador) {
-
-        int cantidadDeProcesos = procesador.getProcesos().size();
-        String[] procesadorConProcesos = new String[cantidadDeProcesos + 2];
-        procesadorConProcesos[0] = procesador.getId();
-        procesadorConProcesos[1] = String.valueOf(procesador.getTiempoTotal());
-
-        for (int i = 2; i < procesadorConProcesos.length; i++) {
-            procesadorConProcesos[i] = procesador.getProcesos().get(i - 2).getId();
+        for (int i = 2; i < dataProcesador.length; i++) {
+            dataProcesador[i] = procesador.getProcesos().get(i - 2).getId();
         }
 
-        this.solucion.add(procesadorConProcesos);
-    }
-
-    private void sumarSolucionPosible() {
-        this.solucionesPosibles++;
-    }
-
-    private void setExiste(boolean existe) {
-        this.existe = existe;
+        this.mejorResultado.add(dataProcesador);
     }
 
     @Override
-
     public String toString() {
 
-        String solucion = "";
-        int tiempoTotal = 0;
+        if (this.mejorResultado.isEmpty()) {
+            return "No se encontró una asignación de tareas adecuada.";
+        }
 
-        for (String[] procesador : this.solucion) {
+        String solucion = "\nSolución encontrada:";
+
+        for (String[] procesador : this.mejorResultado) {
             solucion += "\nTareas asignadas al proc. " + procesador[0] + ":";
 
             for (int i = 2; i < procesador.length; i++) {
                 solucion += " tarea " + procesador[i] + ",";
             }
 
-            solucion += " tiempo de procesamiento: " + procesador[1] + ".";
+            solucion += " tiempo de ejecucion: " + procesador[1] + ".";
         }
-        solucion += "\nCantidad de soluciones posibles generadas: " + this.solucionesPosibles;
-        return solucion;
+
+        return solucion += "\nTiempo maximo de ejecución: " + this.mejorTiempo + "\nSe generaron "
+                + this.cantidadDeEstados + " estados, que resultaron en " + cantidadDeSolucionesPosibles
+                + " soluciones posibles evaluadas.";
     }
 }
