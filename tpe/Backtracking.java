@@ -24,13 +24,13 @@ public class Backtracking {
      * Al asignar todas las tareas, pasamos la solucion posible para ser contada,
      * comparada, y en caso de ser la mejor hasta el momento, guardada.
      */
-    public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas, int x) {
-        backtrack(procesadores, tareas, x);
+    public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas, int tiempoMax) {
+        backtrack(procesadores, tareas, tiempoMax);
         return solucion;
     }
 
     // Metodo recursivo
-    private void backtrack(List<Procesador> procesadores, List<Tarea> tareas, int x) {
+    private void backtrack(List<Procesador> procesadores, List<Tarea> tareas, int tiempoMax) {
 
         // poda por tiempo de ejecucion de la solucion parcial
         if (!puedeMejorar(procesadores)) {
@@ -49,14 +49,14 @@ public class Backtracking {
         for (Procesador p : procesadores) {
 
             // poda por restricciones entre tareas y procesadores
-            if (puedeAsignar(p, tarea, x)) {
+            if (puedeAsignar(p, tarea, tiempoMax)) {
 
                 asignarTarea(p, tarea);
                 tareaIndex++;
 
-                // al decidir asignar la tarea, estamos generando un estado
+                // al decidir asignar la tarea, estamos generando un nuevo estado
                 solucion.sumarEstado();
-                backtrack(procesadores, tareas, x);
+                backtrack(procesadores, tareas, tiempoMax);
 
                 // al volver de la recursion, se desasigna la tarea y se decrece el indice para
                 // explorar otra rama
@@ -67,15 +67,15 @@ public class Backtracking {
     }
 
     // chequeo de restricciones de asignacion
-    private boolean puedeAsignar(Procesador p, Tarea t, int x) {
+    private boolean puedeAsignar(Procesador p, Tarea t, int tiempoMax) {
 
         return (t.getCritica() ? p.getTareasCriticas() < 2 : true)
-                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= x));
+                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= tiempoMax));
     }
 
     // chequeo de tiempo actual contra mejor tiempo
     private boolean puedeMejorar(List<Procesador> solucionParcial) {
-        return (Solucion.calcularTiempoMaximo(solucionParcial) < this.solucion.getMejorTiempo());
+        return (Solucion.calcularTiempoMaximo(solucionParcial) < solucion.getMejorTiempo());
     }
 
     private void asignarTarea(Procesador p, Tarea t) {

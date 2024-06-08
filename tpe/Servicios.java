@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import tpe.utils.CSVReader;
+import tpe.utils.ComparadorPrioridad;
 
 /**
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
@@ -15,10 +16,11 @@ public class Servicios {
 
 	// estructuras para los servicios 1-3
 	/*
-	 * Decidimos utilizar estructuras sencillas, a modo de indices; priorizando
-	 * optimizar el acceso a los datos y no considerar los costos de construccion,
-	 * insercion, borrado, etc; dada la ausencia de insercion, modificacion y
-	 * borrado en tiempo de ejecucion.
+	 * Decidimos utilizar estructuras sencillas, a modo de indices; capaces de
+	 * lograr la complejidad optima de acceso a los datos. Dada la ausencia de
+	 * servicios de insercion, modificacion y borrado, ignoramos las estructuras que
+	 * podrian ser ventajosas en esos casos a costa de complejidad extra en los
+	 * servicios solicitados.
 	 */
 	private HashMap<String, Tarea> indiceID;
 	private List<Tarea> criticas, noCriticas;
@@ -99,14 +101,19 @@ public class Servicios {
 		int i = binariaRecursiva(prioridadInferior, 0, length - 1);
 		int s = binariaRecursiva(prioridadSuperior, 0, length - 1);
 
-		return this.tareas.subList(i, s);
+		return this.indicePrioridad.subList(i, s);
 	}
 
 	// implementamos la asignacion de tareas como servicio 4.
-	public Solucion servicio4(int tiempoMaximo) {
+	public Solucion[] servicio4(int tiempoMaximo) {
 
 		Backtracking backtracking = new Backtracking();
-		return backtracking.resolver(procesadores, tareas, tiempoMaximo);
+		Greedy greedy = new Greedy();
+
+		Solucion[] solucion = new Solucion[2];
+		solucion[0] = backtracking.resolver(procesadores, tareas, tiempoMaximo);
+		solucion[1] = greedy.resolver(procesadores, tareas, tiempoMaximo);
+		return solucion;
 	}
 
 	// Metodos privados
@@ -128,7 +135,8 @@ public class Servicios {
 	}
 
 	private void ordenar() {
-		Collections.sort(this.indicePrioridad);
+		// Collections.sort(indicePrioridad);
+		Collections.sort(indicePrioridad, new ComparadorPrioridad());
 	}
 
 	private int binariaRecursiva(int prioridad, int inicio, int fin) {

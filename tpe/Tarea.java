@@ -67,6 +67,6 @@ public class Tarea implements Comparable<Tarea> {
 
     @Override
     public int compareTo(Tarea t) {
-        return this.prioridad - t.prioridad;
+        return this.getPrioridad() - t.getPrioridad();
     }
 }
