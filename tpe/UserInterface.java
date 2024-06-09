@@ -8,19 +8,21 @@ public class UserInterface {
 
     public static void start(Servicios servicios) {
 
+        // padre, dame piernas..
+
         String userString = "11";
         System.out.println("\nBienvenido");
 
         try {
             BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 
-            while (userString.length() >= 1) {
+            while (userString.length() >= 0) {
 
                 System.out.println("\nPor favor, ingrese el número de servicio que desea utilizar:" +
                         "\n[1] - Búsqueda de tareas por ID." +
                         "\n[2] - Visualización de tareas críticas o no críticas." +
                         "\n[3] - Búsqueda de tareas por rango de prioridad" +
-                        "\n[4] - Asignación de tareas a procesadores.");
+                        "\n[4] - Asignación de tareas a procesadores (estrategias Backtracking y Greedy).\n");
 
                 userString = input.readLine();
 
@@ -70,16 +72,16 @@ public class UserInterface {
                             case "3":
 
                                 System.out.println(
-                                        "\nPor favor, ingrese el limite inferior de del rango de prioridad ( numero entre 0 y 100):");
+                                        "\nPor favor, ingrese el limite inferior de del rango de prioridad (numero entre 0 y 100):");
                                 int inf = Integer.parseInt(input.readLine());
 
                                 if (inf < 0 || inf > 100) {
-                                    System.err.println("Los limites deben estar entre 0 y 100, inclusive.");
+                                    System.out.println("Los limites deben estar entre 0 y 100, inclusive.");
                                     break;
                                 }
 
                                 System.out.println(
-                                        "Por favor, ingrese el limite superior de del rango de prioridad ( numero entre 0 y 100):");
+                                        "Por favor, ingrese el limite superior de del rango de prioridad (numero entre 0 y 100):");
                                 int sup = Integer.parseInt(input.readLine());
 
                                 if (sup < inf) {
@@ -107,7 +109,10 @@ public class UserInterface {
                                         "\nPor favor ingrese el tiempo maximo de ejecucion para los procesadores no refrigerados:");
                                 int x = Integer.parseInt(input.readLine());
 
-                                System.out.println("\nEstrategia Backtracking:" + servicios.servicio4(x).toString());
+                                Solucion[] solucion = servicios.servicio4(x);
+
+                                System.out.println("\nEstrategia Backtracking:" + solucion[0].toString()
+                                        + "\n\nEstrategia Greedy:" + solucion[1]);
                                 break;
                         }
                         break;

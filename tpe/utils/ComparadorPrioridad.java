@@ -1,6 +1,7 @@
-package tpe;
+package tpe.utils;
 
 import java.util.Comparator;
+import tpe.Tarea;
 
 public class ComparadorPrioridad implements Comparator<Tarea> {
 

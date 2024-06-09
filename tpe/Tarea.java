@@ -1,6 +1,6 @@
 package tpe;
 
-public class Tarea implements Comparable<Tarea> {
+public class Tarea {
 
     private String id;
     private String nombre;
@@ -63,10 +63,5 @@ public class Tarea implements Comparable<Tarea> {
                 " - Tiempo de ejecución: " + this.getTiempoEjecucion() +
                 " - Es critica?: " + this.getCritica() +
                 " - Prioridad: " + this.getPrioridad();
-    }
-
-    @Override
-    public int compareTo(Tarea t) {
-        return this.getPrioridad() - t.getPrioridad();
     }
 }

@@ -19,8 +19,7 @@ public class Servicios {
 	 * Decidimos utilizar estructuras sencillas, a modo de indices; capaces de
 	 * lograr la complejidad optima de acceso a los datos. Dada la ausencia de
 	 * servicios de insercion, modificacion y borrado, ignoramos las estructuras que
-	 * podrian ser ventajosas en esos casos a costa de complejidad extra en los
-	 * servicios solicitados.
+	 * podrian ser ventajosas en esos casos.
 	 */
 	private HashMap<String, Tarea> indiceID;
 	private List<Tarea> criticas, noCriticas;
@@ -116,7 +115,7 @@ public class Servicios {
 		return solucion;
 	}
 
-	// Metodos privados
+	// metodos privados
 
 	private void clasificar() {
 		for (Tarea tarea : this.tareas) {
@@ -135,7 +134,6 @@ public class Servicios {
 	}
 
 	private void ordenar() {
-		// Collections.sort(indicePrioridad);
 		Collections.sort(indicePrioridad, new ComparadorPrioridad());
 	}
 

@@ -14,7 +14,7 @@ public class Solucion {
         this.mejorResultado = new ArrayList<>();
     }
 
-    public void compararResultado(List<Procesador> solucion) {
+    public void evaluarSolucion(List<Procesador> solucion) {
 
         this.cantidadDeSolucionesPosibles++;
 
@@ -47,6 +47,12 @@ public class Solucion {
         return tiempoMaximo;
     }
 
+    public static boolean puedeAsignar(Procesador p, Tarea t, int tiempoMax) {
+
+        return (t.getCritica() ? p.getTareasCriticas() < 2 : true)
+                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= tiempoMax));
+    }
+
     private void guardarSolucion(List<Procesador> solucion, int tiempo) {
 
         this.mejorResultado.clear();
@@ -73,7 +79,7 @@ public class Solucion {
     public String toString() {
 
         if (this.mejorResultado.isEmpty()) {
-            return "No se encontró una asignación de tareas adecuada.";
+            return "\nNo se encontró una asignación de tareas adecuada.";
         }
 
         String solucion = "\nSolución encontrada:";
