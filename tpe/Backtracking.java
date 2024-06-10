@@ -18,7 +18,7 @@ public class Backtracking {
      * usuario. Asignaremos las tareas de ser posible, llamaremos la recursion, y al
      * regresar las vamos a desasignar para explorar otras posibilidades.
      * De no poder asignarlas se corta la recursion.
-     * En cada recursion lo primero que chequeamos es el tiempo maximo de nuestra
+     * Antes de cada recursion tambien chequeamos el tiempo maximo de nuestra
      * solucion parcial contra nuestro mejor resultado; si no lo podemos mejorar,
      * podamos.
      * Al asignar todas las tareas, pasamos la solucion posible para ser contada,
