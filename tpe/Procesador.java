@@ -10,6 +10,8 @@ public class Procesador {
     private boolean refrigerado;
     private int anio;
     private List<Tarea> procesos;
+    private int tiempoTotal;
+    private int tareasCriticas;
 
     public Procesador(String id, String codigo, boolean refrigerado, int anio) {
         this.procesos = new ArrayList<>();
@@ -17,36 +19,38 @@ public class Procesador {
         this.setCodigo(codigo);
         this.setRefrigerado(refrigerado);
         this.setAnio(anio);
-    }
-
-    public int getTiempoTotal() {
-        int tiempoTotal = 0;
-        for (Tarea tarea : procesos) {
-            tiempoTotal += tarea.getTiempoEjecucion();
-        }
-        return tiempoTotal;
-    }
-
-    public int getTareasCriticas() {
-        int count = 0;
-        for (Tarea tarea : procesos) {
-            if (tarea.getCritica()) {
-                count++;
-            }
-        }
-        return count;
+        this.tiempoTotal = 0;
+        this.tareasCriticas = 0;
     }
 
     public void agregarProceso(Tarea tarea) {
         procesos.add(tarea);
+        tiempoTotal += tarea.getTiempoEjecucion();
+        if (tarea.getCritica()) {
+            tareasCriticas++;
+        }
+    }
+
+    public int getTiempoTotal() {
+        return tiempoTotal;
+    }
+
+    public int getTareasCriticas() {
+        return tareasCriticas;
     }
 
     public void removerProceso(Tarea tarea) {
         procesos.remove(tarea);
+        tiempoTotal -= tarea.getTiempoEjecucion();
+        if (tarea.getCritica()) {
+            tareasCriticas--;
+        }
     }
 
     public void limpiarProcesos() {
         procesos.clear();
+        tiempoTotal = 0;
+        tareasCriticas = 0;
     }
 
     public List<Tarea> getProcesos() {

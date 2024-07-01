@@ -1,13 +1,14 @@
 package tpe;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import tpe.utils.CSVReader;
 import tpe.utils.ComparadorPrioridad;
 
-/**
+/*
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
  * Sólo se podrá adaptar el nombre de la clase "Tarea" según sus decisiones
  * de implementación.
@@ -23,7 +24,7 @@ public class Servicios {
 	 */
 	private HashMap<String, Tarea> indiceID;
 	private List<Tarea> criticas, noCriticas;
-	private List<Tarea> indicePrioridad;
+	private Tarea[] indicePrioridad;
 
 	// estructuras para el servicio 4, no optimizadas y en el mismo orden presente
 	// en los .csv.
@@ -38,9 +39,9 @@ public class Servicios {
 	 * significa una complejidad O(x.n), que resulta en O(n) al ignorar el valor
 	 * constante x.
 	 * Lamentablemente, la complejidad se eleva por la inclusion de el metodo de
-	 * ordenamiento Collections.sort() llamado por la funcion ordenar(). Utiliza
-	 * ordenamiento Timsort, una version mejorada de Mergesort que en el peor de
-	 * los casos tiene una complejidad de O(n.log n)
+	 * ordenamiento Arrays.sort() llamado por la funcion ordenar(). Utiliza un
+	 * ordenamiento derivado de Timsort, una version mejorada de Mergesort que en el
+	 * peor de los casos tiene una complejidad de O(n.log n).
 	 */
 	public Servicios(String pathProcesadores, String pathTareas) {
 
@@ -51,7 +52,7 @@ public class Servicios {
 		this.indiceID = new HashMap<>();
 		this.criticas = new ArrayList<>();
 		this.noCriticas = new ArrayList<>();
-		this.indicePrioridad = new ArrayList<>(this.tareas);
+		this.indicePrioridad = this.tareas.toArray(new Tarea[this.tareas.size()]);
 
 		hashear();
 		clasificar();
@@ -87,20 +88,29 @@ public class Servicios {
 	 * complejidad de cada busqueda es O(log n), y aunque utilicemos 2 busquedas
 	 * consecutivas, los factores constantes no se tendran en cuenta y O(2.log n)
 	 * seguira siendo equivalente a O(log n).
+	 * Arrays.asList() "envuelve" nuestro array en un objeto lista, con complejidad
+	 * O(1).
 	 * Luego creamos una subList utilizando los indices encontrados. Como una
 	 * subList es una "vista" de la lista original, no hay nuevos accesos a memoria
-	 * y solo se trata de una referencia a las tareas originales, por lo que la
-	 * complejidad de esta operacion, O(1), no suma a la complejidad predominante en
-	 * la funcion.
+	 * y solo se trata de una referencia a las tareas originales, por lo que tanto
+	 * esta operacion como la anterior, ambas de complejidad O(1), no suman a la
+	 * complejidad predominante en la funcion.
 	 */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 
-		int length = this.indicePrioridad.size();
+		int length = this.indicePrioridad.length;
 
 		int i = binariaRecursiva(prioridadInferior, 0, length - 1);
 		int s = binariaRecursiva(prioridadSuperior, 0, length - 1);
 
-		return this.indicePrioridad.subList(i, s);
+		// si el indice superior es parte de la respuesta y no nos caeriamos del array,
+		// lo incrementamos; ya que sublist() no incluye el segundo parametro en su
+		// retorno, chequear la prioridad reviste otra operacion O(1).
+		if (s < length && indicePrioridad[s].getPrioridad() <= prioridadSuperior) {
+			s++;
+		}
+
+		return Arrays.asList(indicePrioridad).subList(i, s);
 	}
 
 	// implementamos la asignacion de tareas como servicio 4.
@@ -134,7 +144,7 @@ public class Servicios {
 	}
 
 	private void ordenar() {
-		Collections.sort(indicePrioridad, new ComparadorPrioridad());
+		Arrays.sort(indicePrioridad, new ComparadorPrioridad());
 	}
 
 	private int binariaRecursiva(int prioridad, int inicio, int fin) {
@@ -147,7 +157,7 @@ public class Servicios {
 		} else {
 
 			medio = (inicio + fin) / 2;
-			int medioPrio = this.indicePrioridad.get(medio).getPrioridad();
+			int medioPrio = this.indicePrioridad[medio].getPrioridad();
 
 			if (prioridad > medioPrio)
 				return binariaRecursiva(prioridad, medio + 1, fin);
