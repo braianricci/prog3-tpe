@@ -84,7 +84,7 @@ public class Servicios {
 	/*
 	 * Servicio 3: O(log n).
 	 *
-	 * Utilizamos una busqueda binaria recursiva sobre una lista ordenada. La
+	 * Utilizamos una busqueda binaria recursiva sobre un arreglo ordenado. La
 	 * complejidad de cada busqueda es O(log n), y aunque utilicemos 2 busquedas
 	 * consecutivas, los factores constantes no se tendran en cuenta y O(2.log n)
 	 * seguira siendo equivalente a O(log n).
@@ -116,12 +116,12 @@ public class Servicios {
 	// implementamos la asignacion de tareas como servicio 4.
 	public Solucion[] servicio4(int tiempoMaximo) {
 
-		Backtracking backtracking = new Backtracking();
-		Greedy greedy = new Greedy();
+		Backtracking backtracking = new Backtracking(tiempoMaximo);
+		Greedy greedy = new Greedy(tiempoMaximo);
 
 		Solucion[] solucion = new Solucion[2];
-		solucion[0] = backtracking.resolver(procesadores, tareas, tiempoMaximo);
-		solucion[1] = greedy.resolver(procesadores, tareas, tiempoMaximo);
+		solucion[0] = backtracking.resolver(procesadores, tareas);
+		solucion[1] = greedy.resolver(procesadores, tareas);
 		return solucion;
 	}
 
@@ -149,14 +149,12 @@ public class Servicios {
 
 	private int binariaRecursiva(int prioridad, int inicio, int fin) {
 
-		int medio;
-
 		if (inicio > fin) {
 			return inicio; // si no se encuentra el elemento, devolvemos inicio, lo que nos dara el indice
 							// que el elemento buscado deberia ocupar en el array
 		} else {
 
-			medio = (inicio + fin) / 2;
+			int medio = (inicio + fin) / 2;
 			int medioPrio = this.indicePrioridad[medio].getPrioridad();
 
 			if (prioridad > medioPrio)

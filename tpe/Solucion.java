@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solucion {
-    private int cantidadDeEstados, cantidadDeSolucionesPosibles, mejorTiempo;
+    private int cantidadDeEstados, cantidadDeSolucionesPosibles, mejorTiempo, tiempoMaxEjecNoRefrigerados;
     private List<String[]> mejorResultado;
 
-    public Solucion() {
+    public Solucion(int tiempoMaxEjecNoRefrigerados) {
         this.cantidadDeEstados = 0;
         this.cantidadDeSolucionesPosibles = 0;
         this.mejorTiempo = Integer.MAX_VALUE;
         this.mejorResultado = new ArrayList<>();
+        this.tiempoMaxEjecNoRefrigerados = tiempoMaxEjecNoRefrigerados;
     }
 
-    public void evaluarSolucion(List<Procesador> solucion) {
+    public void evaluarSolucion(List<Procesador> solucion, int tiempoMaximo) {
 
         this.cantidadDeSolucionesPosibles++;
 
-        int tiempoMaximo = Solucion.calcularTiempoMaximo(solucion);
+        // int tiempoMaximo = Solucion.calcularTiempoMaximo(solucion);
 
         if (tiempoMaximo < this.mejorTiempo) {
             this.mejorTiempo = tiempoMaximo;
@@ -34,23 +35,10 @@ public class Solucion {
         return this.mejorTiempo;
     }
 
-    public static int calcularTiempoMaximo(List<Procesador> procesadores) {
-
-        int tiempoMaximo = 0;
-        for (Procesador p : procesadores) {
-            int tiempoDeProcesado = p.getTiempoTotal();
-            if (tiempoDeProcesado > tiempoMaximo) {
-                tiempoMaximo = tiempoDeProcesado;
-            }
-        }
-
-        return tiempoMaximo;
-    }
-
-    public static boolean puedeAsignar(Procesador p, Tarea t, int tiempoMax) {
+    public boolean puedeAsignar(Procesador p, Tarea t) {
 
         return (t.getCritica() ? p.getTareasCriticas() < 2 : true)
-                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= tiempoMax));
+                && (p.getRefrigerado() || (p.getTiempoTotal() + t.getTiempoEjecucion() <= tiempoMaxEjecNoRefrigerados));
     }
 
     private void guardarSolucion(List<Procesador> solucion, int tiempo) {

@@ -10,15 +10,17 @@ import tpe.utils.ComparadorTiempoEjecucionTotal;
 public class Greedy {
     Solucion solucion;
 
-    public Greedy() {
-        this.solucion = new Solucion();
+    public Greedy(int tiempoMaxEjecNoRefrigerados) {
+        this.solucion = new Solucion(tiempoMaxEjecNoRefrigerados);
     }
 
     /*
      * Nuestra estrategia consiste en tratar de asignar la tarea mas costosa, al
-     * procesador con menos trabajo que capaz de recibirla
+     * procesador con menos trabajo que sea capaz de recibirla
      */
-    public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas, int tiempoMaximo) {
+    public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas) {
+
+        int tiempoMaxActual = 0;
 
         // creamos nuevas listas para reordenarlas sin perder las originales,
         // garantizando reusabilidad.
@@ -39,9 +41,10 @@ public class Greedy {
             for (Procesador p : procOrdenados) {
 
                 // se evaluan las restricciones y de ser posible, se agrega la tarea.
-                if (Solucion.puedeAsignar(p, t, tiempoMaximo)) {
+                if (solucion.puedeAsignar(p, t)) {
                     p.agregarProceso(t);
                     solucion.sumarEstado();
+                    tiempoMaxActual = Math.max(tiempoMaxActual, p.getTiempoTotal());
                     tareaAsignada = true;
                     // salimos del loop para no seguir evaluando procesadores.
                     break;
@@ -57,7 +60,7 @@ public class Greedy {
         }
 
         // al tener todas las tareas asignadas, guardamos la solucion final
-        solucion.evaluarSolucion(procesadores);
+        solucion.evaluarSolucion(procesadores, tiempoMaxActual);
 
         // reseteamos los procesadores en caso de querer utilizar el servicio nuevamente
         limpiarProcesos(procesadores);
