@@ -16,15 +16,15 @@ public class Backtracking {
 
     /*
      * Utilizaremos las listas originales de procesadores y tareas como solucion
-     * parcial que pasamos como parametro junto al tamaño maximo ingresado por el
-     * usuario. Asignaremos las tareas de ser posible, llamaremos la recursion, y al
-     * regresar las vamos a desasignar para explorar otras posibilidades.
+     * parcial que pasamos como parametro. Asignaremos las tareas de ser posible,
+     * llamaremos la recursion, y al regresar las vamos a desasignar para explorar
+     * otras posibilidades.
      * De no poder asignarlas se corta la recursion.
      * Antes de cada recursion tambien chequeamos el tiempo maximo de nuestra
      * solucion parcial contra nuestro mejor resultado; si no lo podemos mejorar,
      * podamos.
-     * Al asignar todas las tareas, pasamos la solucion posible para ser contada,
-     * comparada, y en caso de ser la mejor hasta el momento, guardada.
+     * Al asignar todas las tareas, pasamos la solucion posible para ser comparada,
+     * y en caso de ser la mejor hasta el momento, guardada.
      */
     public Solucion resolver(List<Procesador> procesadores, List<Tarea> tareas) {
         backtrack(procesadores, tareas);
@@ -72,6 +72,7 @@ public class Backtracking {
     // chequeo de tiempo resultante de agregar tarea a un procesador, contra mejor
     // tiempo hasta ahora
     private boolean puedeMejorar(Procesador p, Tarea tarea) {
+
         int tiempoP = p.getTiempoTotal() + tarea.getTiempoEjecucion();
 
         return Math.max(tiempoP, tiempoMaxActual) < solucion.getMejorTiempo();
