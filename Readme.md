@@ -1,4 +1,4 @@
-## TUDAI - Programación 3 - Trabajo Práctico Especial - Parte 1 y 2.
+# TUDAI - Programación 3 - Trabajo Práctico Especial - Parte 1 y 2.
 
 Integrantes:
 -Braian Ricci, DNI: 35.562.572, e-mail: braianricci@gmail.com
@@ -7,13 +7,13 @@ Integrantes:
 Se incluye una clase Main, que llama una clase UserInterface utilizada para la prueba de los servicios requeridos.
 Se decidió incluir la asignación de tareas a procesadores con las estrategias solicitadas, como servicio [4].
 
-## Reentrega
+# Reentrega
 
 Mantenemos una duda con respecto a la correccion, y es que se indica que usamos erroneamente una lista vinculada para el servicio 3. Nosotros usamos una ArrayList y en la documentacion que consultamos ArrayList es sencillamente un arreglo dinamico, que durante el servicio 3 no pasa por ningun crecimiento/decrecimiento, por lo que el servicio (que utiliza busqueda binaria) no deberia incurrir en ninguna complejidad mayor a O(log n).
 
-Pese a esto, aun asi modificamos la clase Servicios basandonos en las pautas de correccion y agradecemos de antemano la aclaracion de la diferencia entre utilizar para este caso un array o una ArrayList.
+Pese a esto, igualmente modificamos la clase Servicios basandonos en las pautas de correccion. Agradeceriamos enormemente clarificacion sobre la diferencia entre utilizar para este caso, un array o una ArrayList.
 
-# Puntos modificados para la reentrega:
+## Puntos modificados para la reentrega:
 
 - ## En Servicios.java:
 
